@@ -1,0 +1,1 @@
+# Wordpress: CVE-2021-29447 Report 
