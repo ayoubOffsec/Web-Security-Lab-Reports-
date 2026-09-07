@@ -1,38 +1,29 @@
-# 🛡️ Cyber Security Foundations: Master Reference Notes
+# 🛡️ Cyber Security Fundamentals & Core Knowledge Base
 
-## 📌 Overview
-This directory serves as a modular, high-yield documentation platform summarizing core concepts across both the **Pre Security** and **Cyber Security 101** pathways on TryHackMe.
-
-Rather than storing exhaustive text in a single file, this repository organizes essential cybersecurity domains into concise, individual reference modules for quick navigation.
+Welcome to the **Cyber Security Fundamentals** section. This directory serves as a structured, foundational knowledge base covering essential concepts required for web security auditing, penetration testing, and security analysis.
 
 ---
 
-## 📑 Core Modules Index
+## 📌 Overview
 
-### 🌐 Fundamentals & Operating Systems
-* [01. Introduction to Cyber Security](./01-Introduction-to-Cyber-Security.md)
-* [02. Computer Fundamentals](./02-Computer-Fundamentals.md)
-* [03. Operating Systems Basics](./03-Operating-Systems-Basics.md)
-* [04. Software Basics](./04-Software-Basics.md)
-* [05. Network Fundamentals](./05-Network-Fundamentals.md)
-* [06. How The Web Works](./06-How-The-Web-Works.md)
-* [07. Attacks and Defenses](./07-Attacks-and-Defenses.md)
+This repository section documents core theoretical and practical principles across 13 primary domains:
 
-### 💻 Systems, Administration & CLI
-* [08. Linux Fundamentals](./08-Linux-Fundamentals.md)
-* [09. Windows & Active Directory Fundamentals](./09-Windows-and-AD-Fundamentals.md)
-* [10. Command Line Mastery](./10-Command-Line.md)
+* **01 - Introduction to Cyber Security:** Fundamental security principles, confidentiality, integrity, availability (CIA triad), and security concepts.
+* **02 - Computer Fundamentals:** Internal hardware architectures, process execution, memory management, and system operations.
+* **03 - Operating Systems Basics:** Core OS design, execution environments, processes, and permissions structures.
+* **04 - Software Basics:** Application structures, client-server models, and execution lifecycles.
+* **05 - Network Fundamentals:** Network layers, protocols (TCP/IP, UDP, ICMP), routing, and switching operations.
+* **06 - How The Web Works:** HTTP/HTTPS request-response cycles, DNS resolution, cookies, headers, and browser mechanics.
+* **07 - Attacks And Defenses:** Overview of threat models, common attack vectors, defensive controls, and security strategies.
+* **08 - Cybersecurity Career Roadmap:** Learning pathways, methodologies, and professional skill benchmarks.
+* **09 - Linux Fundamentals:** Command-line operations, permission models, shell scripting, and administration basics.
+* **10 - Windows & Active Directory Fundamentals:** Windows system internals, user privileges, domain security, and Active Directory architecture.
+* **11 - Command Line Proficiency:** Advanced terminal navigation, text processing utilities, and automation basics.
+* **12 - Networking Deep Dive:** Packet inspection, port scanning, traffic routing analysis, and protocol security.
+* **13 - Cryptography:** Symmetric and asymmetric encryption, hashing algorithms, PKI infrastructure, and data integrity verification.
 
-### 🔓 Networks, Cryptography & Offensive Operations
-* [11. Advanced Networking & Protocols](./11-Networking-Core.md)
-* [12. Cryptography Essentials](./12-Cryptography.md)
-* [13. Exploitation Basics](./13-Exploitation-Basics.md)
-* [14. Web Hacking Foundations](./14-Web-Hacking.md)
-* [15. Offensive Security Tooling](./15-Offensive-Security-Tooling.md)
+---
 
-### 🛡️ Defensive Operations & Architecture
-* [16. Defensive Security & Incident Response](./16-Defensive-Security.md)
-* [17. Security Solutions & Monitoring](./17-Security-Solutions.md)
-* [18. Defensive Security Tooling](./18-Defensive-Security-Tooling.md)
-* [19. Career Pathways & Security Principles](./19-Build-Your-Cyber-Security-Career.md)
-* [20. OWASP Top 10 (2025 Standard)](./20-OWASP-Top-10-2025.md)
+## 🎯 Purpose
+
+The primary objective of this documentation is to establish a solid foundation in computer systems, networks, and operating environments before diving into web application vulnerability exploitation and source code auditing.
