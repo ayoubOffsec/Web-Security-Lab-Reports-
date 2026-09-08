@@ -1,13 +1,14 @@
 # Executive Security Audit & Penetration Testing Report
+
 # CMS & News Site / Blog Security Audit
 
 ## 1. Overview
 
 This security assessment was conducted against a vulnerable WordPress blog environment provided as part of a controlled TryHackMe security lab.
 
-The objective was to enumerate the web application, identify weaknesses in the WordPress deployment, obtain valid user credentials through the identified weaknesses, and determine whether the identified vulnerabilities could lead to further compromise.
+The objective was to enumerate the web application, identify security weaknesses within the WordPress installation, obtain valid user credentials through the identified weaknesses, and assess the impact of the discovered vulnerabilities.
 
-All testing was performed against the intentionally vulnerable lab environment.
+All testing was performed against the intentionally vulnerable laboratory environment.
 
 ---
 
@@ -20,24 +21,24 @@ All testing was performed against the intentionally vulnerable lab environment.
 | Environment      | Controlled Security Lab               |
 | CMS Version      | WordPress 5.0                         |
 | Testing Approach | Black-Box Web Application Testing     |
-| Primary Tools    | WPScan, Browser, Metasploit Framework |
+| Tools            | WPScan, Browser, Metasploit Framework |
 
 ---
 
 ## 3. Executive Summary
 
-During the assessment, several security weaknesses were identified within the WordPress installation.
+During the assessment, multiple security weaknesses were identified within the WordPress installation.
 
 The assessment identified:
 
-* Exposure of the WordPress administration endpoint.
-* User enumeration through application responses.
+* Exposure of a predictable administration endpoint.
+* Username enumeration through application responses.
 * Disclosure of valid WordPress usernames.
 * Weak authentication controls allowing password guessing.
 * Disclosure of an outdated WordPress version.
-* A known Remote Code Execution vulnerability affecting the identified WordPress version.
+* A known Remote Code Execution vulnerability affecting the identified version.
 
-The combination of information disclosure, weak authentication, and an outdated vulnerable CMS significantly increased the attack surface of the application.
+The combination of these weaknesses increased the attack surface of the application and allowed the assessment to progress from initial enumeration to authenticated access and ultimately exploitation of a known vulnerability.
 
 ---
 
@@ -49,7 +50,7 @@ The combination of information disclosure, weak authentication, and an outdated 
 | WEB-02 | Username Enumeration                       | Medium   |
 | WEB-03 | User Information Disclosure                | Medium   |
 | WEB-04 | Weak Password / Brute-Force Exposure       | High     |
-| WEB-05 | Outdated WordPress Version Disclosure      | Medium   |
+| WEB-05 | Outdated WordPress Version                 | Medium   |
 | WEB-06 | Remote Code Execution – CVE-2019-8943      | Critical |
 
 ---
@@ -60,84 +61,112 @@ The combination of information disclosure, weak authentication, and an outdated 
 
 ### Description
 
-The WordPress administration interface was accessible through a predictable administrative path.
+During the initial enumeration phase, a predictable administration endpoint was identified.
 
-The application exposed the administration functionality through the `/admin` endpoint.
+The WordPress administration functionality was accessible through:
 
-Predictable administrative endpoints make it easier for attackers to identify authentication interfaces and focus further attacks against them.
+```text
+/admin
+```
+
+Exposing a predictable administrative endpoint makes the authentication interface easier to identify and can provide attackers with a direct target for subsequent authentication attacks.
 
 ### Evidence
 
-The `/admin` path was discovered during enumeration of the target application.
+The `/admin` endpoint was identified during application enumeration.
+
+### Screenshot
+
+<img width="1586" height="763" alt="1" src="https://github.com/user-attachments/assets/d2f99a69-13dd-4918-98d6-9105c4bf9382" />
 
 ### Impact
 
-The exposure of an administrative endpoint does not necessarily represent a vulnerability by itself. However, when combined with username enumeration and weak authentication controls, it can significantly increase the risk of unauthorized access.
+The existence of a predictable administrative endpoint does not necessarily constitute a critical vulnerability by itself.
+
+However, when combined with username enumeration and weak authentication controls, it can significantly increase the likelihood of unauthorized access.
 
 ### Recommendation
 
-* Avoid exposing unnecessary administrative interfaces.
-* Restrict administrative functionality using appropriate access controls.
-* Implement rate limiting and account lockout mechanisms.
-* Consider restricting administrative access to trusted networks where appropriate.
-* Ensure strong authentication is enforced.
+* Restrict access to administrative functionality where possible.
+* Implement strong authentication controls.
+* Apply rate limiting to authentication endpoints.
+* Consider network-level restrictions for administrative interfaces.
+* Enable multi-factor authentication for privileged accounts.
 
 ---
 
-## WEB-02 — Username Enumeration
+# WEB-02 — Username Enumeration
 
 ### Description
 
-The application returned different responses when an invalid username was supplied.
+The application returned distinguishable responses when an invalid username was submitted.
 
-This behavior allowed the tester to determine whether a supplied username was valid based on the server response.
+This behavior allowed the tester to determine information about the supplied username based on the server response.
 
-Such behavior can enable attackers to enumerate valid accounts before attempting authentication attacks.
+Such behavior can be abused to identify valid accounts before conducting authentication attacks.
 
 ### Evidence
 
-When an incorrect username was submitted, the server returned a response containing information related to the supplied username.
+An invalid username was submitted during authentication testing, and the server response revealed information related to the supplied username.
+
+### Screenshot
+
+<img width="415" height="528" alt="2" src="https://github.com/user-attachments/assets/f88afe2e-cc46-4889-8838-6cde20c9e362" />
+
 
 ### Impact
 
-An attacker can use this behavior to build a list of valid accounts and subsequently target those accounts with password guessing or other authentication attacks.
+Username enumeration can help an attacker construct a list of valid accounts.
+
+These accounts can subsequently be targeted using password guessing, credential stuffing, or other authentication attacks.
 
 ### Recommendation
 
 * Return generic authentication error messages.
 * Avoid revealing whether a username exists.
 * Implement authentication rate limiting.
-* Monitor repeated authentication attempts.
-* Implement multi-factor authentication for privileged accounts.
+* Monitor repeated failed authentication attempts.
+* Enable MFA for sensitive accounts.
 
 ---
 
-## WEB-03 — User Information Disclosure
+# WEB-03 — User Information Disclosure
 
 ### Description
 
-During application enumeration, valid WordPress usernames were discovered.
+Further enumeration of the application revealed valid WordPress usernames.
 
-The usernames identified during the assessment included:
+The following usernames were identified:
 
-* `kwheel`
-* `bjoel`
+```text
+kwheel
+bjoel
+```
 
-The disclosure of valid usernames provides useful information for subsequent authentication attacks.
+The disclosure of valid usernames provides useful information for attackers attempting to compromise user accounts.
+
+### Evidence
+
+Two valid usernames were discovered during the enumeration of the application.
+
+### Screenshot
+
+<img width="828" height="786" alt="3" src="https://github.com/user-attachments/assets/7d028887-1569-43b9-b24a-bd2ffeb07c1c" />
+
 
 ### Impact
 
-Username disclosure reduces the amount of information an attacker needs to discover before attempting account compromise.
+An attacker no longer needs to guess potential usernames.
 
-When combined with weak passwords, this can result in unauthorized access.
+The disclosed accounts can be directly targeted during authentication attacks, reducing the overall effort required to compromise an account.
 
 ### Recommendation
 
-* Prevent unnecessary exposure of usernames.
-* Review WordPress user enumeration behavior.
-* Avoid exposing author information where it is not required.
-* Use strong authentication controls and MFA.
-* Monitor suspicious authentication activity.
+* Prevent unnecessary disclosure of WordPress usernames.
+* Review author and user enumeration functionality.
+* Avoid exposing account information through public endpoints.
+* Implement strong authentication mechanisms.
+* Enable MFA for privileged accounts.
 
 ---
 
@@ -145,50 +174,62 @@ When combined with weak passwords, this can result in unauthorized access.
 
 ### Description
 
-After identifying valid usernames, password guessing was performed against one of the discovered accounts in the controlled lab environment.
+After identifying valid usernames, password guessing was performed against one of the discovered accounts within the controlled laboratory environment.
 
 A valid password was successfully identified for the `kwheel` account.
 
-### Evidence
-
 The discovered credentials were:
 
-`kwheel / cutiepie1`
+```text
+Username: kwheel
+Password: cutiepie1
+```
 
-The credentials were subsequently used to authenticate successfully to the application.
+The credentials were then used to successfully authenticate to the application.
+
+### Evidence
+
+The authentication attempt resulted in successful access using the discovered credentials.
+
+### Screenshot
+
+<img width="1586" height="803" alt="4" src="https://github.com/user-attachments/assets/cc5b4dfb-db61-4f75-935f-7a5105c7eb34" />
+
 
 ### Impact
 
-Weak passwords combined with insufficient protection against repeated authentication attempts can allow attackers to compromise user accounts.
+The use of a weak or predictable password significantly increases the risk of account compromise.
 
-This becomes particularly dangerous when the compromised account has elevated privileges.
+The absence of effective protections against repeated authentication attempts further increases the risk of brute-force or password-guessing attacks.
 
 ### Recommendation
 
-* Enforce strong password policies.
-* Prevent the use of commonly used or predictable passwords.
+* Enforce strong password requirements.
+* Prevent the use of common and predictable passwords.
 * Implement rate limiting.
-* Implement account lockout or progressive delays.
+* Implement progressive delays or account lockout controls.
 * Enable multi-factor authentication.
-* Monitor repeated failed authentication attempts.
+* Monitor repeated failed login attempts.
 
 ---
 
-# WEB-05 — Outdated WordPress Version Disclosure
+# WEB-05 — Outdated WordPress Version
 
 ### Description
 
-The target was scanned using WPScan to identify the WordPress version.
+The target was scanned using WPScan to identify the WordPress version and gather information about the CMS deployment.
 
-The assessment identified the application as running:
+The scan identified:
 
-**WordPress 5.0**
+```text
+WordPress 5.0
+```
 
-The identified version is outdated and should not be exposed on an internet-facing application without appropriate security controls and patching.
+The identified version is outdated and associated with publicly documented vulnerabilities.
 
 ### Evidence
 
-WPScan was used against the target:
+The following command was used:
 
 ```bash
 wpscan --url http://10.81.132.106/
@@ -196,35 +237,40 @@ wpscan --url http://10.81.132.106/
 
 The scan identified WordPress version 5.0.
 
+### Screenshot
+
+<img width="862" height="123" alt="5" src="https://github.com/user-attachments/assets/0ec1ee6b-304e-4f06-9401-089010d6c922" />
+
+
 ### Impact
 
-Running an outdated CMS version can expose the application to publicly documented vulnerabilities.
+Running an outdated CMS version increases the attack surface of the application.
 
-Attackers can use version information to identify known vulnerabilities that may be applicable to the target.
+Publicly documented vulnerabilities can allow attackers to identify and target weaknesses that affect the deployed version.
 
 ### Recommendation
 
-* Upgrade WordPress to a currently supported version.
+* Upgrade WordPress to a supported and patched version.
 * Keep plugins and themes updated.
-* Remove unnecessary plugins and themes.
-* Monitor security advisories.
-* Prevent unnecessary version disclosure where possible.
+* Remove unused plugins and themes.
+* Monitor WordPress security advisories.
+* Maintain a regular patch management process.
 
 ---
 
-# WEB-06 — Remote Code Execution (CVE-2019-8943)
+# WEB-06 — Remote Code Execution — CVE-2019-8943
 
 ### Description
 
-After identifying WordPress 5.0, the version was investigated for known vulnerabilities.
+After identifying WordPress 5.0, the installed version was investigated for known security vulnerabilities.
 
-A known Remote Code Execution vulnerability, **CVE-2019-8943**, was identified as applicable to the lab environment.
+A known Remote Code Execution vulnerability, **CVE-2019-8943**, was identified as applicable to the vulnerable laboratory environment.
 
 The vulnerability was subsequently tested using the Metasploit Framework.
 
 ### Exploitation
 
-The following Metasploit workflow was used in the controlled lab:
+The following workflow was used during the authorized lab assessment:
 
 ```text
 search cve-2019-8943
@@ -239,116 +285,129 @@ exploit
 
 The previously discovered `kwheel` credentials were supplied to the exploit module.
 
-The exploit was successfully executed against the vulnerable lab target.
+The exploit was successfully executed against the vulnerable laboratory target.
+
+### Evidence
+
+The successful exploitation demonstrated that the vulnerable WordPress installation could be reached through the identified vulnerability.
+
+### Screenshot
+
+<img width="1500" height="726" alt="6" src="https://github.com/user-attachments/assets/c15df56a-b0ec-4065-84c3-4af67c6dec14" />
+
 
 ### Impact
 
-Successful exploitation of a Remote Code Execution vulnerability can allow an attacker to execute commands on the underlying server.
+Successful exploitation of a Remote Code Execution vulnerability may allow an attacker to execute commands on the underlying server.
 
-Depending on the privileges of the compromised process, this can potentially lead to:
+Depending on the privileges available to the compromised process, this could potentially result in:
 
 * Unauthorized command execution.
-* Compromise of application data.
+* Access to application data.
 * Further system compromise.
-* Access to sensitive information.
-* Privilege escalation through additional vulnerabilities.
+* Exposure of sensitive information.
+* Additional privilege escalation opportunities.
 
 ### Recommendation
 
-* Upgrade WordPress to a secure supported version.
-* Apply security patches as soon as they become available.
-* Maintain an inventory of CMS versions and components.
-* Remove unsupported software.
-* Restrict application privileges using least privilege.
-* Monitor the server for suspicious command execution.
-* Conduct regular vulnerability assessments.
+* Upgrade WordPress to a supported and patched version.
+* Apply security updates immediately.
+* Remove unsupported CMS versions.
+* Maintain an inventory of installed software and components.
+* Apply the principle of least privilege.
+* Monitor the server for suspicious activity.
+* Perform regular vulnerability assessments.
 
 ---
 
 # 6. Attack Chain
 
-The assessment demonstrated how several individually significant weaknesses could be chained together.
+The assessment demonstrated how several weaknesses could be chained together:
 
 ```text
-Web Enumeration
-       │
-       ▼
+Initial Enumeration
+        │
+        ▼
 Administration Endpoint Discovery
-       │
-       ▼
+        │
+        ▼
 Username Enumeration
-       │
-       ▼
+        │
+        ▼
 Valid Username Discovery
-       │
-       ▼
+        │
+        ▼
 Password Guessing
-       │
-       ▼
+        │
+        ▼
 Valid Credentials
-       │
-       ▼
+        │
+        ▼
 WordPress Version Identification
-       │
-       ▼
+        │
+        ▼
 Known Vulnerability Identification
-       │
-       ▼
+        │
+        ▼
 CVE-2019-8943
-       │
-       ▼
+        │
+        ▼
 Remote Code Execution
 ```
 
-This attack chain demonstrates the importance of addressing both individual vulnerabilities and the overall security posture of the application.
+This attack chain demonstrates how information disclosure and weak authentication controls can facilitate exploitation of an outdated CMS.
 
 ---
 
 # 7. Risk Assessment
 
-The most significant risk identified during the assessment was the combination of weak authentication controls with an outdated WordPress installation affected by a known Remote Code Execution vulnerability.
+The most significant risk identified during the assessment was the combination of weak authentication controls and an outdated WordPress installation affected by a known Remote Code Execution vulnerability.
 
-While individual information disclosure issues may have limited impact, they can provide valuable information that facilitates subsequent attacks.
+The information disclosure findings provided useful information for subsequent attacks, while the weak authentication controls allowed valid credentials to be obtained.
 
-The successful exploitation of CVE-2019-8943 demonstrates that the vulnerable CMS version could ultimately lead to code execution on the target system.
+The outdated WordPress version then exposed the application to a known vulnerability that was successfully exploited in the controlled laboratory environment.
+
+### Overall Risk
+
+**Critical**
 
 ---
 
 # 8. Remediation Priorities
 
-### Immediate
+### Immediate Actions
 
 1. Upgrade WordPress to a supported and patched version.
-2. Remove or mitigate the vulnerable component responsible for CVE-2019-8943.
-3. Reset compromised or weak user credentials.
-4. Enforce strong password requirements.
+2. Address the vulnerability associated with CVE-2019-8943.
+3. Reset weak or compromised credentials.
+4. Enforce strong password policies.
 5. Implement authentication rate limiting.
 
-### Short Term
+### Short-Term Actions
 
-6. Review username enumeration behavior.
+6. Mitigate username enumeration.
 7. Reduce unnecessary information disclosure.
 8. Protect administrative interfaces.
 9. Enable MFA for privileged accounts.
-10. Review installed plugins and themes.
+10. Review installed WordPress components.
 
-### Ongoing
+### Ongoing Security
 
-11. Keep WordPress, plugins, and themes continuously updated.
+11. Keep WordPress, plugins, and themes updated.
 12. Perform regular vulnerability assessments.
 13. Monitor authentication and server activity.
-14. Maintain a security patch management process.
+14. Maintain a formal security patch management process.
 
 ---
 
 # 9. Conclusion
 
-The security assessment identified multiple weaknesses in the WordPress blog environment, ranging from information disclosure and username enumeration to weak authentication and a vulnerable CMS version.
+The assessment identified multiple weaknesses within the WordPress blog environment, ranging from information disclosure and username enumeration to weak authentication and an outdated CMS version.
 
-The most critical finding was the successful exploitation of **CVE-2019-8943**, which demonstrated the potential for Remote Code Execution against the vulnerable WordPress installation.
+The most critical finding was the successful exploitation of **CVE-2019-8943**, demonstrating the potential impact of running an outdated and vulnerable WordPress installation.
 
-The assessment highlights how seemingly minor weaknesses, such as username disclosure, can contribute to a larger attack chain when combined with weak authentication and outdated software.
+The assessment also demonstrated how several lower-impact weaknesses can be combined to form a more effective attack chain.
 
-**Overall Risk: High / Critical**
+Addressing the identified vulnerabilities, particularly the outdated CMS version and authentication weaknesses, would significantly reduce the attack surface of the application.
 
-> **Note:** This assessment was performed against an intentionally vulnerable security laboratory environment for educational and authorized testing purposes.
+---
